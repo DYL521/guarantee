@@ -6,4 +6,13 @@
  @contact: chng547835@163.com  
  @site: www.xxxx.com  
  @software: PyCharm  @since:python 3.5.2 on 2016/11/3.10:49  
- """  
+ """
+from django.conf.urls import url
+from backend import views
+
+urlpatterns = [
+    # url(r'^backend/', views.=),
+
+
+]
+

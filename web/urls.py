@@ -8,8 +8,13 @@
  @software: PyCharm  @since:python 3.5.2 on 2016/11/3.10:49  
  """
 from django.conf.urls import url
+from web.views import home
 
 urlpatterns = [
-    # url(r'^', home.index),
 
+    # (?P<name>)	给分组起个名字
+    url(r'^all/(?P<article_type_id>\d+).html$', home.index,name='index'),
+
+
+    url(r'^', home.index),
 ]

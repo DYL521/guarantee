@@ -1,89 +1,155 @@
 from django.db import models
 
-# Create your models here.
-'''
-ËµÊÇForeignKeyÊÇone-to-manyµÄ£¬²¢¾ÙÁËÒ»¸ö³µµÄÀı×Ó£º
-ÓĞÁ½¸öÅä¼ş±í£¬Ò»¸öÊÇ³µÂÖ±í£¬ÁíÒ»¸öÊÇÒıÇæ±í¡£Á½¸ö±í¶¼ÓĞÒ»¸öcar×Ö¶Î£¬±íÊ¾¸ÃÅä¼ş¶ÔÓ¦µÄ³µ¡£
-¶ÔÓÚ³µÂÖÀ´Ëµ£¬¶à¸ö¶ÔÓ¦Ò»¸öcarµÄÇé¿öºÜÕı³££¬ËùÒÔcar×Ö¶ÎÓ¦¸ÃÓÃForeignKeyÀ´±íÊ¾¡£
-¶ÔÓÚÒıÇæÀ´Ëµ£¬Ò»¸öÒıÇæÖ»¿ÉÄÜ¶ÔÓ¦Ò»¸öcar£¬ËùÒÔ±ØĞëÓÃOneToOneField¡£
-OneToOneField(someModel) ¿ÉÒÔÀí½âÎª ForeignKey(SomeModel, unique=True)¡£
-¡¡¡¡
-¡¡¡¡Á½ÕßµÄ·´Ïò²éÑ¯ÊÇÓĞ²î±ğµÄ£º
-¡¡¡¡ForeignKey·´Ïò²éÑ¯·µ»ØµÄÊÇÒ»¸öÁĞ±í£¨Ò»¸ö³µÓĞ¶à¸öÂÖ×Ó£©¡£
-¡¡¡¡OneToOneField·´Ïò²éÑ¯·µ»ØµÄÊÇÒ»¸öÄ£ĞÍÊ¾Àı£¨ÒòÎªÒ»¶ÔÒ»¹ØÏµ£©¡£
-'''
-
 
 class UserInfo(models.Model):
-    '''
-    ÓÃ»§±í
-    '''
+    """
+    ç”¨æˆ·è¡¨
+    """
     nid = models.BigAutoField(primary_key=True)
-    username = models.CharField(verbose_name='ÓÃ»§Ãû', max_length=32, unique=True)
-    password = models.CharField(verbose_name='ÃÜÂë', max_length=64)
-    nickname = models.CharField(verbose_name='êÇ³Æ', max_length=32)
-    email = models.EmailField(verbose_name='ÓÊÏä', unique=True)
-    avatar = models.ImageField(verbose_name='Í·Ïñ')
+    username = models.CharField(verbose_name='ç”¨æˆ·å', max_length=32, unique=True)
+    password = models.CharField(verbose_name='å¯†ç ', max_length=64)
+    nickname = models.CharField(verbose_name='æ˜µç§°', max_length=32)
+    email = models.EmailField(verbose_name='é‚®ç®±', unique=True)
+    avatar = models.ImageField(verbose_name='å¤´åƒ')
 
-    create_time = models.DateTimeField(verbose_name='´´½¨Ê±¼ä', auto_now_add=True)
+    create_time = models.DateTimeField(verbose_name='åˆ›å»ºæ—¶é—´', auto_now_add=True)
+
+    fans = models.ManyToManyField(verbose_name='ç²‰ä¸ä»¬',
+                                  to='UserInfo',
+                                  through='UserFans',
+                                  related_name='f',
+                                  through_fields=('user', 'follower'))
 
 
 class Blog(models.Model):
-    '''²©¿ÍĞÅÏ¢'''
-    nid = models.BigIntegerField(primary_key=True)
-    title = models.CharField(verbose_name='¸öÈË²©¿Í±êÌâ', max_length=64)
-    site = models.CharField(verbose_name='¸öÈË²©¿ÍÇ°×º', max_length=32, unique=True)
-    theme = models.CharField(verbose_name='²©¿ÍÖ÷Ìâ', max_length=32)
-
-    ##  Ò»¶ÔÒ»£¬ Ò»¸ö²©¿Í¶ÔÓ¦Ò»¸öÓÃ»§
+    """
+    åšå®¢ä¿¡æ¯
+    """
+    nid = models.BigAutoField(primary_key=True)
+    title = models.CharField(verbose_name='ä¸ªäººåšå®¢æ ‡é¢˜', max_length=64)
+    site = models.CharField(verbose_name='ä¸ªäººåšå®¢å‰ç¼€', max_length=32, unique=True)
+    theme = models.CharField(verbose_name='åšå®¢ä¸»é¢˜', max_length=32)
     user = models.OneToOneField(to='UserInfo', to_field='nid')
 
 
 class UserFans(models.Model):
-    '''
-    »¥·Û¹ØÏµ±í
-    '''
-    user = models.ForeignKey(verbose_name='²©Ö÷', to='UserInfo', to_field='nid', related_name='users')
-    follower = models.ForeignKey(verbose_name='·ÛË¿', to='UserInfo', to_field='nid', related_name='followers')
+    """
+    äº’ç²‰å…³ç³»è¡¨
+    """
+    user = models.ForeignKey(verbose_name='åšä¸»', to='UserInfo', to_field='nid', related_name='users')
+    follower = models.ForeignKey(verbose_name='ç²‰ä¸', to='UserInfo', to_field='nid', related_name='followers')
 
     class Meta:
-        unique_together = [  ## ÁªºÏÎ¨Ò»
-            ('user', 'follower')
+        unique_together = [
+            ('user', 'follower'),
         ]
 
 
-class CateGory(models.Model):
-    '''
-    ²©Ö÷¸öÈËÎÄÕÂ·ÖÀà
-    '''
+class Category(models.Model):
+    """
+    åšä¸»ä¸ªäººæ–‡ç« åˆ†ç±»è¡¨
+    """
     nid = models.AutoField(primary_key=True)
-    title = models.CharField(verbose_name='·ÖÀà±êÌâ', max_length=32)
+    title = models.CharField(verbose_name='åˆ†ç±»æ ‡é¢˜', max_length=32)
 
-    blog = models.ForeignKey(verbose_name='ËùÊô²©¿Í', to='Blog', to_field='nid')
+    blog = models.ForeignKey(verbose_name='æ‰€å±åšå®¢', to='Blog', to_field='nid')
 
 
 class ArticleDetail(models.Model):
-    '''
-     ÎÄÕÂÄÚÈİÏêÏ¸±í
-     content:ÄÚÈİ
-     artice: ¹ØÁªÎÄÕÂid --Ò»¸öÎÄÕÂÖ»ÓĞÒ»¸öÖ÷ÒªÄÚÈİ
-    '''
-    content = models.TextField(verbose_name='ÎÄÕÂÄÚÈİ')
-    artice = models.OneToOneField(verbose_name='ËùÊôÎÄÕÂ', to='Article', to_field='nid')
+    """
+    æ–‡ç« è¯¦ç»†è¡¨
+    """
+    content = models.TextField(verbose_name='æ–‡ç« å†…å®¹', )
+
+    article = models.OneToOneField(verbose_name='æ‰€å±æ–‡ç« ', to='Article', to_field='nid')
 
 
 class UpDown(models.Model):
-    '''
-    ÎÄÕÂ²È»òÕßÊÇ¶¥
-    article £º²È»òÔŞµÄÎÄÕÂ--- ¶ÔÓ¦Ò»ÆªÎÄÕÂ
-    user£º Ë­²ÈµÄ¡¢»òÕßÕ¾---- ¶ÔÓ¦Ò»¸öÓÃ»§
-    up£ºÔŞ»òÕßÊÇ²È
-    '''
+    """
+    æ–‡ç« é¡¶æˆ–è¸©
+    """
+    article = models.ForeignKey(verbose_name='æ–‡ç« ', to='Article', to_field='nid')
+    user = models.ForeignKey(verbose_name='èµæˆ–è¸©ç”¨æˆ·', to='UserInfo', to_field='nid')
+    up = models.BooleanField(verbose_name='æ˜¯å¦èµ')
 
-    article = models.ForeignKey(verbose_name='ÎÄÕÂ', to='Article', to_field='nid')
-    user = models.ForeignKey(verbose_name='ÔŞ»òÕß²ÈµÄÓÃ»§', to='UserInfo', to_field='nid')
-    up = models.BooleanField(verbose_name='²È»òÕßÔŞ')
+    class Meta:
+        unique_together = [
+            ('article', 'user'),
+        ]
 
 
+class Comment(models.Model):
+    """
+    è¯„è®ºè¡¨
+    """
+    nid = models.BigAutoField(primary_key=True)
+    content = models.CharField(verbose_name='è¯„è®ºå†…å®¹', max_length=255)
+    create_time = models.DateTimeField(verbose_name='åˆ›å»ºæ—¶é—´', auto_now_add=True)
+
+    reply = models.ForeignKey(verbose_name='å›å¤è¯„è®º', to='self', related_name='back', null=True)
+    article = models.ForeignKey(verbose_name='è¯„è®ºæ–‡ç« ', to='Article', to_field='nid')
+    user = models.ForeignKey(verbose_name='è¯„è®ºè€…', to='UserInfo', to_field='nid')
 
 
+class Tag(models.Model):
+    nid = models.AutoField(primary_key=True)
+    title = models.CharField(verbose_name='æ ‡ç­¾åç§°', max_length=32)
+    blog = models.ForeignKey(verbose_name='æ‰€å±åšå®¢', to='Blog', to_field='nid')
+
+    def __str__(self):
+        return self.title
+
+class Article(models.Model):
+    nid = models.BigAutoField(primary_key=True)
+    title = models.CharField(verbose_name='æ–‡ç« æ ‡é¢˜', max_length=128)
+    summary = models.CharField(verbose_name='æ–‡ç« ç®€ä»‹', max_length=255)
+    read_count = models.IntegerField(default=0)
+    comment_count = models.IntegerField(default=0)
+    up_count = models.IntegerField(default=0)
+    down_count = models.IntegerField(default=0)
+    create_time = models.DateTimeField(verbose_name='åˆ›å»ºæ—¶é—´', auto_now_add=True)
+    blog = models.ForeignKey(verbose_name='æ‰€å±åšå®¢', to='Blog', to_field='nid')
+    category = models.ForeignKey(verbose_name='æ–‡ç« ç±»å‹', to='Category', to_field='nid', null=True)
+
+    type_choices = [
+        (1, "Python"),
+        (2, "Linux"),
+        (3, "OpenStack"),
+        (4, "GoLang"),
+        (5, 'ç¦åˆ©æ¨¡å—'),  ## ä¸“é—¨ä¸ºä»–æä¸ªè¡¨
+    ]
+
+    article_type_id = models.IntegerField(choices=type_choices, default=None)
+
+    tags = models.ManyToManyField(
+        to="Tag",
+        through='Article2Tag',
+        through_fields=('article', 'tag'),
+    )
+    class Meta:
+        verbose_name_plural = 'æ–‡ç« '
+
+    def __str__(self):
+        return self.title
+
+
+class Article2Tag(models.Model):
+    article = models.ForeignKey(verbose_name='æ–‡ç« ', to="Article", to_field='nid')
+    tag = models.ForeignKey(verbose_name='æ ‡ç­¾', to="Tag", to_field='nid')
+
+    class Meta:
+        unique_together = [
+            ('article', 'tag'),
+        ]
+
+
+class MeiZi(models.Model):
+    nid = models.BigAutoField(primary_key=True)
+    title = models.CharField(max_length=32,verbose_name='æ ‡é¢˜')
+    src = models.FileField(max_length=32,verbose_name='å›¾ç‰‡è·¯å¾„',upload_to='static/imgs/meizi')
+
+    class Meta:
+        verbose_name_plural = 'å¦¹å­'
+
+    def __str__(self):
+        return self.title
