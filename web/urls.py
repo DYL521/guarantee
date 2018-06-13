@@ -12,9 +12,14 @@ from web.views import home
 
 urlpatterns = [
 
+    ## 妹子图片
+    url(r'^get_imgs.html', home.get_imgs),
+
     # (?P<name>)	给分组起个名字
     url(r'^all/(?P<article_type_id>\d+).html$', home.index,name='index'),
 
 
+    ## 取妹子的图片
     url(r'^', home.index),
+
 ]

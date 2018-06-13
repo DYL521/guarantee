@@ -18,20 +18,12 @@
                 {% else %}
                     <li><a href="/">全部</a></li>
                 {% endif %}
-                {% for item in article_type_list %}
 
+                {% for item in article_type_list %}
                     {% if item.0 == article_type_id %}
-                        {% if article_type_id == 5 %}
-                            <li class="active"><a href="/meizi">{{ item.1 }}</a></li>
-                        {% else %}
-                            <li class="active"><a href="/all/{{ item.0 }}.html">{{ item.1 }}</a></li>
-                        {% endif %}
+                        <li class="active"><a href="/all/{{ item.0 }}.html">{{ item.1 }}</a></li>
                     {% else %}
-                        {% if article_type_id == 5 %}
-                            <li><a href="/meizi">{{ item.1 }}</a></li>
-                        {% else %}
-                            <li><a href="/all/{{ item.0 }}.html">{{ item.1 }}</a></li>
-                        {% endif %}
+                        <li><a href="/all/{{ item.0 }}.html">{{ item.1 }}</a></li>
                     {% endif %}
 
                 {% endfor %}
