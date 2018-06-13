@@ -9,14 +9,17 @@
  """
 from django.conf.urls import url
 from web.views import home
-
+from web.views import account
 urlpatterns = [
 
+    url(r'^register.html$', account.register),
+
     ## 妹子图片
-    url(r'^get_imgs.html', home.get_imgs),
+    url(r'^get_imgs.html$', home.get_imgs),
 
     # (?P<name>)	给分组起个名字
     url(r'^all/(?P<article_type_id>\d+).html$', home.index,name='index'),
+
 
 
     ## 取妹子的图片
